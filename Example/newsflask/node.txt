@@ -1,0 +1,8 @@
+cookie和session的机制
+cookie
+	为什么有cookie存在
+	cookie是什么
+session
+	为什么会有session
+	session是什么
+
