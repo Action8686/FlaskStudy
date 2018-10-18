@@ -16,6 +16,10 @@ __author__ = 'action'
 # 在flask很多扩展里边都可以先初始化扩展对象,然后再去调用init_app方法初始化
 db = SQLAlchemy()
 
+# 在py3.6以上的版本中支持这种写法
+# 这样在views中导入redis_sore就可以有智能提示了
+redis_store = None  # type:StrictRedis
+# redis_store:StrictRedis = None
 
 def setup_log(config_name):
     # 设置日志的记录等级
@@ -42,10 +46,17 @@ def create_app(config_name):
     # 通过app初始化, 可以查看SQLAlchemy源码
     db.init_app(app)
     # 初始化 redis存储对象
+    # 设置redis_store为全局变量,局部变量不能被别的模块引用,变为全局变量可以为别的模块引用
+    global redis_store
     redis_store = StrictRedis(host=config[config_name].REDIS_HOST, port=config[config_name].REDIS_PORT)
     # 开启当前项目的csrf保护,只做服务器验证功能
     CSRFProtect(app)
     # 设置session保存指定位置
     Session(app)
+
+    # 注册蓝图
+    # 在这里导入模块,这样会避免出现导入不成功的现象
+    from info.modules.index import index_blu
+    app.register_blueprint(index_blu)
 
     return app
