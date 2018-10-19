@@ -47,10 +47,10 @@ def create_app(config_name):
     db.init_app(app)
     # 初始化 redis存储对象
     # 设置redis_store为全局变量,局部变量不能被别的模块引用,变为全局变量可以为别的模块引用
-    global redis_store
-    redis_store = StrictRedis(host=config[config_name].REDIS_HOST, port=config[config_name].REDIS_PORT)
+    global redis_store  # 需要设置decode_responses=True 不然在输入验证码的时候,输入的是str 获取出来是byte
+    redis_store = StrictRedis(host=config[config_name].REDIS_HOST, port=config[config_name].REDIS_PORT, decode_responses=True)
     # 开启当前项目的csrf保护,只做服务器验证功能
-    CSRFProtect(app)
+    # CSRFProtect(app)
     # 设置session保存指定位置
     Session(app)
 
@@ -58,5 +58,9 @@ def create_app(config_name):
     # 在这里导入模块,这样会避免出现导入不成功的现象
     from info.modules.index import index_blu
     app.register_blueprint(index_blu)
+
+    from info.modules.passport import passpot_blu
+    app.register_blueprint(passpot_blu)
+
 
     return app

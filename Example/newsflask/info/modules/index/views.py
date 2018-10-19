@@ -7,12 +7,14 @@ __author__ = 'action'
 
 from . import index_blu
 
+
 @index_blu.route('/')
 def index():
     # 设置redis_store name haha
     # redis_store.set("name", "haha")
     # return 'index'
     return render_template('news/index.html')
+
 
 # 在打开网页的时候,浏览器会默认请求跟根路径favicon.ico 作为网站标签的小图标
 # send_static_file是flask取查找指定静态文件所调用的方法
