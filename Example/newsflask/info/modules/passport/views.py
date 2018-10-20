@@ -64,7 +64,8 @@ def register():
     # 记录用户最后一次登录的时间
     user.last_login = datetime.now()
     # TODO 对密码做处理
-
+    # 需求：在设置 password 的时候，去对 password 进行加密，并且将加密结果给 user.password_hash 赋值
+    user.password = password
     # 6. 将user 模型添加到数据库
     try:
         db.session.add(user)
