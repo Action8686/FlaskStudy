@@ -9,12 +9,11 @@ from flask_wtf.csrf import CSRFProtect, generate_csrf
 from redis import StrictRedis
 
 from config import config
-from info.utils.common import do_index_class
 
 __author__ = 'action'
 
 # 初始化数据库,
-# 在flask很多扩展里边都可以先初始化扩展对象,然后再去调用init_app方法初始化
+
 db = SQLAlchemy()
 
 # 在py3.6以上的版本中支持这种写法
@@ -59,6 +58,10 @@ def create_app(config_name):
     CSRFProtect(app)
     # 设置session保存指定位置
     Session(app)
+
+    # 在flask很多扩展里边都可以先初始化扩展对象,然后再去调用init_app方法初始化
+    # 在创建app时候调用,不然会报错,不能导入db错误
+    from info.utils.common import do_index_class
 
     # 添加自定义过滤器
     app.add_template_filter(do_index_class, "index_class")

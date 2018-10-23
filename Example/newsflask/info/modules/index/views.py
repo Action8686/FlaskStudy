@@ -1,8 +1,9 @@
 # encoding: utf-8
-from flask import render_template, session, request, jsonify
+from flask import render_template, session, request, jsonify, g
 from flask import current_app
 from info import redis_store
 from info.models import User, News, Category
+from info.utils.common import user_login_data
 from info.utils.response_code import RET
 
 __author__ = 'action'
@@ -68,6 +69,7 @@ def news_list():
 
 
 @index_blu.route('/')
+@user_login_data
 def index():
     # 设置redis_store name haha
     # redis_store.set("name", "haha")
@@ -79,15 +81,16 @@ def index():
     :return:
     """
     # 显示用户是否登录的逻辑
-    # 取到用户的id
-    user_id = session.get('user_id')
-    user = None  # 当查询不到用户的时候,user为None, 不返回数据
-    if user_id:
-        # 尝试查询用户的模型
-        try:
-            user = User().query.get(user_id)
-        except Exception as e:
-            current_app.logger.error(e)
+    # # 取到用户的id
+    # user_id = session.get('user_id')
+    # user = None  # 当查询不到用户的时候,user为None, 不返回数据
+    # if user_id:
+    #     # 尝试查询用户的模型
+    #     try:
+    #         user = User().query.get(user_id)
+    #     except Exception as e:
+    #         current_app.logger.error(e)
+    user = g.user
 
     # 右侧的新闻排行的逻辑
     news_list = []
