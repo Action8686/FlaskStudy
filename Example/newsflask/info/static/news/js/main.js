@@ -105,19 +105,45 @@ $(function(){
     $(".login_form_con").submit(function (e) {
         e.preventDefault()
         var mobile = $(".login_form #mobile").val()
-        var password = $(".login_form #password").val()
+        var passport = $(".login_form #password").val()
 
         if (!mobile) {
             $("#login-mobile-err").show();
             return;
         }
 
-        if (!password) {
+        if (!passport) {
             $("#login-password-err").show();
             return;
         }
 
         // 发起登录请求
+        var params = {
+            "mobile":mobile,
+            "passport":passport
+        }
+        $.ajax({
+            url: "/passport/login",
+            type: "post",//遇到了错误,没有写类型
+            contentType:"application/json",
+            // 在header中添加csrf_token的随机值
+            headers:{
+                "X-CSRFToken": getCookie('csrf_token')
+            },
+            data: JSON.stringify(params),
+            success: function (resp) {
+                if (resp.errno == "0"){
+                    //代表登录成功
+                    location.reload()
+                }else {
+                    alert(resp.errmsg)
+                    $("#login-password-err").html(resp.errmsg)
+                    $("#login-password-err").show()
+
+                }
+            }
+
+        })
     })
 
 
@@ -163,6 +189,10 @@ $(function(){
             type: "post",
             data: JSON.stringify(params),
             contentType: "application/json",
+            headers:{
+                "X-CSRFToken": getCookie('csrf_token')
+            },
+
             success: function (resp) {
                 if (resp.errno == "0"){
                     // 代表注册成功
@@ -222,7 +252,7 @@ function sendSMSCode() {
         "image_code_id": imageCodeId
     }
 
-    // 发起注册请求
+    // 发起短信请求
     $.ajax({
         // 请求地址
         url: "/passport/sms_code",
@@ -232,6 +262,7 @@ function sendSMSCode() {
         data: JSON.stringify(params),
         // 请求参数的数据类型
         contentType: "application/json",
+        headers:{"X-CSRFToken": getCookie('csrf_token')},
         success: function (response) {
             //response 是后端传过来的数据
             if (response.errno == "0"){
@@ -264,6 +295,12 @@ function sendSMSCode() {
                 $(".get_code").attr("onclick", "sendSMSCode();");
             }
         }
+    })
+}
+
+function logout() {
+    $.get('/passport/logout', function (resp) {
+        location.reload()
     })
 }
 
