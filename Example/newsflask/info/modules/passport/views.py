@@ -31,9 +31,6 @@ def logout():
     return jsonify(errno=RET.OK, errmsg='退出成功')
 
 
-
-
-
 @passpot_blu.route('/login', methods=["POST"])
 def login():
     """
