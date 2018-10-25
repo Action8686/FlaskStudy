@@ -17,7 +17,7 @@ def user_info():
         # 代表没有登录,重定向到首页
         return redirect("/")
     data = {
-        "user":user.to_dict()
+        "user": user.to_dict()
     }
 
     return render_template('news/user.html', data=data)
